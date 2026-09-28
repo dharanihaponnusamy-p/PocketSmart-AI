@@ -1,0 +1,3 @@
+async function api(url,options={}){let o={...options,credentials:'include'};o.headers=o.headers||{};if(o.body&&!(o.body instanceof FormData)&&typeof o.body!=='string'){o.headers['Content-Type']='application/json';o.body=JSON.stringify(o.body)}try{let r=await fetch(url,o),d;try{d=await r.json()}catch{d={detail:await r.text()}}return {ok:r.ok,status:r.status,data:d}}catch(e){return {ok:false,status:0,data:{detail:'Cannot connect to backend. Is the server running?'}}}}
+async function logout(){await api('/api/logout',{method:'POST'});location='/'}
+function escapeHtml(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}

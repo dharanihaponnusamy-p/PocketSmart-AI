@@ -1,0 +1,14 @@
+from fastapi import Depends, HTTPException, Request, status
+from sqlalchemy.orm import Session
+from .auth import COOKIE_NAME, get_user_id_from_token
+from .database import get_db
+from .models import User
+
+def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
+    user_id = get_user_id_from_token(request.cookies.get(COOKIE_NAME))
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Login required")
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User session is no longer valid")
+    return user
